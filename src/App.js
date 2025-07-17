@@ -89,23 +89,6 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Aplicación de inscripción de cursos</h1>
-        
-        <h2>Detalles del usuario:</h2>
-        {loading && <p>Cargando datos de usuario...</p>}
-        {error && <p style={{ color: 'red' }}>Error: {error}</p>}
-        {usuarioData && !loading && !error && (
-          <div style={{ background: '#282c34', padding: '15px', borderRadius: '8px', maxWidth: '600px', margin: '20px auto', overflowWrap: 'break-word' }}>
-            <h3>Información de usuario:</h3>
-            <p><strong>ID de usuario:</strong> {usuarioData.usuarioId}</p>
-            <p><strong>Nombre:</strong> {usuarioData.nombre}</p>
-            <p><strong>Correo electrónico:</strong> {usuarioData.email}</p>
-            <p><strong>Fecha de registro:</strong> {usuarioData.fechaRegistro}</p>
-          </div>
-        )}
-
-        <hr style={{ width: '80%', margin: '40px auto', borderColor: '#444' }} />
-
         <div>
             <h2>Ingresa tu correo electrónico:</h2>
             <input
@@ -138,8 +121,9 @@ function App() {
             maxWidth: '900px', 
             margin: '20px auto', 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
-            gap: '20px' 
+            gridTemplateColumns: 'repeat(2, 1fr)', 
+            gap: '20px',
+            justifyContent: 'center'
           }}>
             {cursosData.map(curso => (
               <div key={curso.cursoId} style={{ 
@@ -177,10 +161,6 @@ function App() {
             ))}
           </div>
         )}
-
-        <p style={{ marginTop: '30px', fontSize: '0.9em', color: '#bbb' }}>
-          ¡Tu app se está conectando a los microservicios de AWS!
-        </p>
       </header>
     </div>
   );
