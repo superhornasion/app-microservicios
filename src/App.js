@@ -89,6 +89,8 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        <h1>Aplicación de inscripción de cursos</h1>
+        
         <div>
             <h2>Ingresa tu correo electrónico:</h2>
             <input
