@@ -59,7 +59,7 @@ function App() {
     console.log(`Intentando solicitar información para Curso ID: ${cursoId}, con Email: ${userEmail}`);
     
     try {
-      const response = await fetch(`${apiBaseUrl}/solicitar-info`, {
+      const response = await fetch(`${apiBaseUrl}/solicitar-info-curso`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
