@@ -62,15 +62,15 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Aplicación de Inscripción de Cursos</h1>
+        <h1>Aplicación de inscripción de cursos</h1>
 
         {/* Sección para mostrar los Detalles del Usuario */}
-        <h2>Detalles del Usuario (ID: {loading ? '...' : (error ? 'N/A' : (usuarioData ? usuarioData.usuarioId : 'N/A'))}):</h2>
+        <h2>Detalles del usuario (ID: {loading ? '...' : (error ? 'N/A' : (usuarioData ? usuarioData.usuarioId : 'N/A'))}):</h2>
         {loading && <p>Cargando datos de usuario...</p>}
         {error && <p style={{ color: 'red' }}>Error: {error}</p>}
         {usuarioData && !loading && !error && (
           <div style={{ background: '#282c34', padding: '15px', borderRadius: '8px', maxWidth: '600px', margin: '20px auto', overflowWrap: 'break-word' }}>
-            <h3 style={{ color: '#61dafb' }}>Datos de Usuario recibidos:</h3>
+            <h3 style={{ color: '#61dafb' }}>Datos de usuario recibidos:</h3>
             <pre style={{ textAlign: 'left', color: 'white', whiteSpace: 'pre-wrap' }}>
               {JSON.stringify(usuarioData, null, 2)}
             </pre>
@@ -80,7 +80,7 @@ function App() {
         <hr style={{ width: '80%', margin: '40px auto', borderColor: '#444' }} /> {/* Separador visual */}
 
         {/* Sección para mostrar la Lista de Cursos */}
-        <h2>Cursos Disponibles:</h2>
+        <h2>Cursos disponibles:</h2>
         {loading && <p>Cargando cursos...</p>}
         {error && <p style={{ color: 'red' }}>Error: {error}</p>}
         {/* Si no hay carga, no hay error y la lista de cursos está vacía */}
