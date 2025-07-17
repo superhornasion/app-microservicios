@@ -6,7 +6,7 @@ function App() {
   const [cursosData, setCursosData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [userEmail, setUserEmail] = useState(''); // Nuevo estado para el email del usuario
+  const [userEmail, setUserEmail] = useState('');
 
   const apiBaseUrl = 'https://6u4vwmix41.execute-api.us-west-2.amazonaws.com/dev'; 
 
@@ -49,13 +49,40 @@ function App() {
 
   }, [apiBaseUrl]); 
 
-  const handleRequestInfo = (cursoId) => {
+  // Esta es la función handleRequestInfo actualizada que hace la llamada al backend.
+  const handleRequestInfo = async (cursoId) => { 
     if (!userEmail) {
       alert('Por favor, ingresa tu correo electrónico antes de solicitar información.');
       return;
     }
-    console.log(`Solicitud de información para Curso ID: ${cursoId}, con Email: ${userEmail}`);
-    alert(`¡Gracias! Se solicitará información para el curso ${cursoId} a ${userEmail}.`);
+
+    console.log(`Intentando solicitar información para Curso ID: ${cursoId}, con Email: ${userEmail}`);
+    
+    try {
+      const response = await fetch(`${apiBaseUrl}/solicitar-info`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ // Envía los datos como JSON en el cuerpo
+          cursoId: cursoId,
+          email: userEmail
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json(); 
+        throw new Error(`Error al solicitar información: ${response.status} - ${errorData.message || JSON.stringify(errorData)}`);
+      }
+
+      const result = await response.json();
+      console.log("Respuesta de la API:", result);
+      alert(`¡Gracias! ${result.message}`); 
+
+    } catch (err) {
+      console.error("Error al hacer la solicitud de información:", err);
+      alert(`Hubo un problema al procesar tu solicitud: ${err.message}`);
+    }
   };
 
 
