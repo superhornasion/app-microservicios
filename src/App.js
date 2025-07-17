@@ -1,30 +1,22 @@
-// src/App.js
 import React, { useEffect, useState } from 'react';
-import './App.css'; // Esto es el CSS por defecto de create-react-app. Puedes modificarlo o eliminarlo si no lo usas.
+import './App.css'; 
 
 function App() {
-  // Estados para almacenar los datos del usuario, los cursos, el estado de carga y cualquier error
   const [usuarioData, setUsuarioData] = useState(null);
-  const [cursosData, setCursosData] = useState([]); // Nuevo estado para almacenar la lista de cursos
-  const [loading, setLoading] = useState(true); // Estado general de carga para ambas llamadas
-  const [error, setError] = useState(null); // Estado general de error
+  const [cursosData, setCursosData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [userEmail, setUserEmail] = useState(''); // Nuevo estado para el email del usuario
 
-  // *** ¡MUY IMPORTANTE! ***
-  // Reemplaza esta URL con la URL de invocación REAL y COMPLETA de tu API Gateway.
-  // Debe ser exactamente como la que API Gateway te dio al desplegar (ej. https://abcdef1234.execute-api.us-east-1.amazonaws.com/dev)
   const apiBaseUrl = 'https://6u4vwmix41.execute-api.us-west-2.amazonaws.com/dev'; 
 
-  // useEffect se ejecuta después de que el componente se renderiza. Ideal para llamadas a APIs.
   useEffect(() => {
-    // Función asíncrona para obtener los datos del usuario Y los cursos
-    const fetchData = async () => { // <-- INICIO DE LA FUNCIÓN fetchData
-      setLoading(true); // Indica que la carga ha comenzado
-      setError(null);   // Limpia errores anteriores
+    const fetchData = async () => { 
+      setLoading(true);
+      setError(null);   
 
-      // --> EL BLOQUE TRY DEBE ESTAR DENTRO DE LAS LLAVES DE LA FUNCIÓN fetchdata
       try { 
-        // --- 1. Obtener datos de UN Usuario (la funcionalidad que ya te funciona) ---
-        const userId = 'user001'; // Asegúrate que este ID exista en tu tabla UsuariosDB
+        const userId = 'user001'; 
         console.log(`Fetching user data for ID: ${userId} from ${apiBaseUrl}/usuarios/${userId}`);
         const userResponse = await fetch(`${apiBaseUrl}/usuarios/${userId}`); 
         if (!userResponse.ok) {
@@ -35,8 +27,6 @@ function App() {
         console.log("User data received:", userData);
         setUsuarioData(userData);
 
-        // --- 2. Obtener la LISTA de todos los Cursos ---
-        // Llama al endpoint /cursos sin un ID específico para obtener todos
         console.log(`Fetching all courses from ${apiBaseUrl}/cursos`);
         const coursesResponse = await fetch(`${apiBaseUrl}/cursos`); 
         if (!coursesResponse.ok) {
@@ -45,49 +35,74 @@ function App() {
         }
         const coursesData = await coursesResponse.json();
         console.log("Courses data received:", coursesData);
-        setCursosData(coursesData); // Almacena la lista de cursos en el estado
+        setCursosData(coursesData);
 
       } catch (err) {
-        // Captura cualquier error de las peticiones API
         console.error("Error during API calls:", err);
         setError(err.message);
       } finally {
-        setLoading(false); // Finaliza el estado de carga
+        setLoading(false);
       }
-    }; // <-- FIN DE LA FUNCIÓN fetchData
+    }; 
 
-    fetchData(); // Ejecuta la función para obtener datos cuando el componente se monta
+    fetchData(); 
 
-  }, [apiBaseUrl]); // La dependencia apiBaseUrl es por buenas prácticas
+  }, [apiBaseUrl]); 
+
+  const handleRequestInfo = (cursoId) => {
+    if (!userEmail) {
+      alert('Por favor, ingresa tu correo electrónico antes de solicitar información.');
+      return;
+    }
+    console.log(`Solicitud de información para Curso ID: ${cursoId}, con Email: ${userEmail}`);
+    alert(`¡Gracias! Se solicitará información para el curso ${cursoId} a ${userEmail}.`);
+  };
+
 
   return (
     <div className="App">
       <header className="App-header">
         <h1>Aplicación de inscripción de cursos</h1>
         
-        {/* Sección para mostrar los Detalles del Usuario */}
-        <h2>Detalles del usuario (ID: {loading ? '...' : (error ? 'N/A' : (usuarioData ? usuarioData.usuarioId : 'N/A'))}):</h2>
+        <h2>Detalles del usuario:</h2>
         {loading && <p>Cargando datos de usuario...</p>}
         {error && <p style={{ color: 'red' }}>Error: {error}</p>}
         {usuarioData && !loading && !error && (
           <div style={{ background: '#282c34', padding: '15px', borderRadius: '8px', maxWidth: '600px', margin: '20px auto', overflowWrap: 'break-word' }}>
-            <h3 style={{ color: '#61dafb' }}>Datos de usuario recibidos:</h3>
-            <pre style={{ textAlign: 'left', color: 'white', whiteSpace: 'pre-wrap' }}>
-              {JSON.stringify(usuarioData, null, 2)}
-            </pre>
+            <h3>Información de usuario:</h3>
+            <p><strong>ID de usuario:</strong> {usuarioData.usuarioId}</p>
+            <p><strong>Nombre:</strong> {usuarioData.nombre}</p>
+            <p><strong>Correo electrónico:</strong> {usuarioData.email}</p>
+            <p><strong>Fecha de registro:</strong> {usuarioData.fechaRegistro}</p>
           </div>
         )}
 
-        <hr style={{ width: '80%', margin: '40px auto', borderColor: '#444' }} /> {/* Separador visual */}
+        <hr style={{ width: '80%', margin: '40px auto', borderColor: '#444' }} />
 
-        {/* Sección para mostrar la Lista de Cursos */}
+        <div>
+            <h2>Ingresa tu correo electrónico:</h2>
+            <input
+                type="email"
+                placeholder="tu.correo@ejemplo.com"
+                value={userEmail}
+                onChange={(e) => setUserEmail(e.target.value)}
+                style={{
+                    padding: '10px',
+                    width: '80%',
+                    maxWidth: '300px',
+                    borderRadius: '5px',
+                    border: '1px solid #61dafb',
+                    marginBottom: '15px',
+                    fontSize: '1em'
+                }}
+            />
+        </div>
+
         <h2>Cursos disponibles:</h2>
         {loading && <p>Cargando cursos...</p>}
         {error && <p style={{ color: 'red' }}>Error: {error}</p>}
-        {/* Si no hay carga, no hay error y la lista de cursos está vacía */}
         {!loading && !error && cursosData.length === 0 && <p>No se encontraron cursos en DynamoDB.</p>}
         
-        {/* Mostrar los cursos si no hay carga ni error y hay cursos */}
         {!loading && !error && cursosData.length > 0 && (
           <div style={{ 
             background: '#282c34', 
@@ -108,14 +123,29 @@ function App() {
                 boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
               }}>
                 <h3 style={{ color: '#61dafb', margin: '0 0 10px 0' }}>{curso.titulo}</h3>
-                <p style={{ margin: '0 0 5px 0', fontSize: '0.9em' }}>**ID:** {curso.cursoId}</p>
-                <p style={{ margin: '0 0 5px 0', fontSize: '0.9em' }}>**Duración:** {curso.duracionHoras} horas</p>
-                <p style={{ margin: '0 0 5px 0', fontSize: '0.9em' }}>**Precio:** ${curso.precio ? curso.precio.toFixed(2) : 'N/A'}</p>
+                <p style={{ margin: '0 0 5px 0', fontSize: '0.9em' }}><strong>ID de curso:</strong> {curso.cursoId}</p>
+                <p style={{ margin: '0 0 5px 0', fontSize: '0.9em' }}><strong>Duración:</strong> {curso.duracionHoras} horas</p>
+                <p style={{ margin: '0 0 5px 0', fontSize: '0.9em' }}><strong>Precio:</strong> ${curso.precio ? curso.precio.toFixed(2) : 'N/A'}</p>
                 <p style={{ fontSize: '0.85em', color: '#ccc', lineHeight: '1.4' }}>{curso.descripcion}</p>
-                {/* Aquí iría el botón "Seleccionar" o "Solicitar Información" para las siguientes funcionalidades */}
-                {/* <button style={{ marginTop: '10px', padding: '8px 15px', borderRadius: '5px', border: 'none', background: '#007bff', color: 'white', cursor: 'pointer' }}>
-                  Solicitar Información
-                </button> */}
+                
+                <button 
+                    onClick={() => handleRequestInfo(curso.cursoId)}
+                    style={{ 
+                        marginTop: '15px', 
+                        padding: '10px 20px', 
+                        borderRadius: '5px', 
+                        border: 'none', 
+                        background: '#007bff', 
+                        color: 'white', 
+                        fontSize: '1em',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.2s'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0056b3'}
+                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#007bff'}
+                >
+                  Solicitar información
+                </button>
               </div>
             ))}
           </div>
