@@ -1,27 +1,28 @@
+// src/App.js
 import React, { useEffect, useState } from 'react';
-import './App.css';
+import './App.css'; // Esto es el CSS por defecto de create-react-app. Puedes modificarlo o eliminarlo si no lo usas.
 
 function App() {
-  // Estados para almacenar los datos del usuario, el estado de carga y cualquier error
+  // Estados para almacenar los datos del usuario, los cursos, el estado de carga y cualquier error
   const [usuarioData, setUsuarioData] = useState(null);
-  const [cursosData, setCursosData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [cursosData, setCursosData] = useState([]); // Nuevo estado para almacenar la lista de cursos
+  const [loading, setLoading] = useState(true); // Estado general de carga para ambas llamadas
+  const [error, setError] = useState(null); // Estado general de error
 
   // *** ¡MUY IMPORTANTE! ***
   // Reemplaza esta URL con la URL de invocación REAL y COMPLETA de tu API Gateway.
   // Debe ser exactamente como la que API Gateway te dio al desplegar (ej. https://abcdef1234.execute-api.us-east-1.amazonaws.com/dev)
   const apiBaseUrl = 'https://6u4vwmix41.execute-api.us-west-2.amazonaws.com/dev'; 
 
-  // useEffect se ejecuta después de que el componente se renderiza por primera vez.
-  // Es ideal para hacer llamadas a APIs.
+  // useEffect se ejecuta después de que el componente se renderiza. Ideal para llamadas a APIs.
   useEffect(() => {
-    // Función asíncrona para obtener los datos del usuario
-    const fetchUserData = async () => {
+    // Función asíncrona para obtener los datos del usuario Y los cursos
+    const fetchData = async () => { // <-- INICIO DE LA FUNCIÓN fetchData
       setLoading(true); // Indica que la carga ha comenzado
-      setError(null); // Resetea cualquier error anterior
+      setError(null);   // Limpia errores anteriores
 
-    try {
+      // --> EL BLOQUE TRY DEBE ESTAR DENTRO DE LAS LLAVES DE LA FUNCIÓN fetchdata
+      try { 
         // --- 1. Obtener datos de UN Usuario (la funcionalidad que ya te funciona) ---
         const userId = 'user001'; // Asegúrate que este ID exista en tu tabla UsuariosDB
         console.log(`Fetching user data for ID: ${userId} from ${apiBaseUrl}/usuarios/${userId}`);
@@ -53,7 +54,7 @@ function App() {
       } finally {
         setLoading(false); // Finaliza el estado de carga
       }
-    };
+    }; // <-- FIN DE LA FUNCIÓN fetchData
 
     fetchData(); // Ejecuta la función para obtener datos cuando el componente se monta
 
@@ -63,7 +64,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1>Aplicación de inscripción de cursos</h1>
-
+        
         {/* Sección para mostrar los Detalles del Usuario */}
         <h2>Detalles del usuario (ID: {loading ? '...' : (error ? 'N/A' : (usuarioData ? usuarioData.usuarioId : 'N/A'))}):</h2>
         {loading && <p>Cargando datos de usuario...</p>}
@@ -85,7 +86,7 @@ function App() {
         {error && <p style={{ color: 'red' }}>Error: {error}</p>}
         {/* Si no hay carga, no hay error y la lista de cursos está vacía */}
         {!loading && !error && cursosData.length === 0 && <p>No se encontraron cursos en DynamoDB.</p>}
-
+        
         {/* Mostrar los cursos si no hay carga ni error y hay cursos */}
         {!loading && !error && cursosData.length > 0 && (
           <div style={{ 
